@@ -2,16 +2,20 @@ require_relative "heap"
 
 class Array
   def heap_sort!
-    pr = Proc.new{|el1, el2| el2 <=> el1 }
+    prc = Proc.new{|el1, el2| el2 <=> el1 }
     heap_boundary = 1
     until heap_boundary == self.length
-      p self[0..heap_boundary]
-      BinaryMinHeap.heapify_up(self[0..heap_boundary],
-        heap_boundary, heap_boundary - 0,
-        &pr)
-      p self[0..heap_boundary]
+      BinaryMinHeap.heapify_up(self,
+        heap_boundary, heap_boundary,
+        &prc)
       heap_boundary += 1
     end
-    self
+    self[0], self[-1] = self[-1], self[0]
+    heap_boundary = self.length - 2
+    until heap_boundary.zero?
+      BinaryMinHeap.heapify_down(self, 0, heap_boundary + 1, &prc)
+      self[0], self[heap_boundary] = self[heap_boundary], self[0]
+      heap_boundary -= 1
+    end
   end
 end
